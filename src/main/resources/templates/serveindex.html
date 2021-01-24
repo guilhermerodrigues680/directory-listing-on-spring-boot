@@ -1,0 +1,44 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Directory Listing on Spring Boot</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <style>
+        .size250px {
+            font-family: monospace;
+            display: inline-block;
+            width: 250px;
+        }
+    </style>
+</head>
+<body>
+    <h1 th:text="'Index of ' + ${path}"></h1>
+
+    <hr>
+
+    <div>
+        <span>
+            <a href="../">../</a>
+        </span>
+    </div>
+
+    <div th:each="dir : ${dirs}">
+        <span class="size250px">
+            <a th:text="${dir.getName()} + '/'" th:href="@{'./' + ${dir.getName()} + '/'}"></a>
+        </span>
+        <!-- <span th:text="${dir.getLastModified()}" class="size250px"></span> -->
+        <span th:text="${#temporals.format(dir.getLastModified(), 'dd-MMM-yyyy HH:mm:ss z')}" class="size250px"></span>
+        <span th:text="${dir.getLength()}" class="size250px"></span>
+    </div>
+    <div th:each="file : ${files}">
+        <span class="size250px">
+            <a th:text="${file.getName()}" th:href="@{'./' + ${file.getName()}}"></a>
+        </span>
+        <!-- <span th:text="${file.getLastModified()}" class="size250px"></span> -->
+        <span th:text="${#temporals.format(file.getLastModified(), 'dd-MMM-yyyy HH:mm:ss z')}" class="size250px"></span>
+        <span th:text="${file.getLength()}" class="size250px">0</span>
+    </div>
+
+    <hr>
+</body>
+</html>
