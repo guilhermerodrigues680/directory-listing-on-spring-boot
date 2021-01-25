@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload de arquivo</title>
+</head>
+<body>
+    <h1>Upload de arquivo</h1>
+    <form action="/api/upload" method="post" enctype="multipart/form-data">
+        <label>
+            Selecione o Arquivo
+            <input type="file" name="file">
+        </label>
+        <br>
+        <input type="submit" value="Enviar">
+    </form>
+</body>
+</html>
