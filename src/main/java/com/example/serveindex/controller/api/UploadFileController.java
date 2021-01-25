@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping("/api/upload")
@@ -23,17 +25,9 @@ public class UploadFileController {
     UploadFileService uploadFileService;
 
     @PostMapping
-    public ResponseEntity<UploadFileResponse> uploadData(@RequestParam("file") MultipartFile file) {
-        if (file == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Você deve selecionar um arquivo para enviar");
-        }
-
-        if (file.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Você deve selecionar um arquivo não vazio para enviar");
-        }
-
+    public ResponseEntity<List<UploadFileResponse>> uploadData(@RequestParam("file") MultipartFile[] file) {
         try {
-            return ResponseEntity.ok(uploadFileService.uploadFile(file));
+            return ResponseEntity.ok(uploadFileService.uploadMultipleFiles(file));
         } catch (UploadFileException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }

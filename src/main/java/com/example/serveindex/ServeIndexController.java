@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.util.UriUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -14,8 +15,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.FileNameMap;
-import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.Instant;
@@ -37,7 +37,7 @@ public class ServeIndexController {
         String uriPath = request.getRequestURI().substring(request.getContextPath().length());
         log.info(uriPath);
 
-        File uriFile = Paths.get(publicDirFile.getPath(), uriPath.replace("/public", "")).toFile();
+        File uriFile = Paths.get(publicDirFile.getPath(), UriUtils.decode(uriPath.replace("/public", ""), StandardCharsets.UTF_8)).toFile();
 
         // Arquivo solicitado nao existe
         if (!uriFile.exists()) {
@@ -53,12 +53,12 @@ public class ServeIndexController {
                 String mimeType = getContentTypeFor(uriFile.getName());
                 response.setContentType(mimeType);
 
-                // Arquivos HTML são mostrados no browser, os outros são downloads
-                if (mimeType != null && mimeType.equals("text/html")) {
+//                 // Arquivos HTML são mostrados no browser, os outros são downloads
+//                if (mimeType != null && mimeType.equals("text/html")) {
                     response.setHeader("Content-disposition", "inline");
-                } else {
-                    response.setHeader("Content-disposition", "attachment; filename=" + uriFile.getName());
-                }
+//                } else {
+//                    response.setHeader("Content-disposition", "attachment; filename=" + uriFile.getName());
+//                }
 
                 InputStream is = new FileInputStream(uriFile);
                 // copy it to response's OutputStream

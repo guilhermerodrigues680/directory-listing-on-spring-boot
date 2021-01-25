@@ -24,7 +24,7 @@
 
     <div th:each="dir : ${dirs}">
         <span class="size250px">
-            <a th:text="${dir.getName()} + '/'" th:href="@{'./' + ${dir.getName()} + '/'}"></a>
+            <a th:text="${dir.getName()} + '/'" th:href="@{'./' + ${dir.getNameUrlEncode()} + '/'}"></a>
         </span>
         <!-- <span th:text="${dir.getLastModified()}" class="size250px"></span> -->
         <span th:text="${#temporals.format(dir.getLastModified(), 'dd-MMM-yyyy HH:mm:ss z')}" class="size250px"></span>
@@ -32,7 +32,7 @@
     </div>
     <div th:each="file : ${files}">
         <span class="size250px">
-            <a th:text="${file.getName()}" th:href="@{'./' + ${file.getName()}}"></a>
+            <a th:text="${file.getName()}" th:href="@{'./' + ${file.getNameUrlEncode()}}"></a>
         </span>
         <!-- <span th:text="${file.getLastModified()}" class="size250px"></span> -->
         <span th:text="${#temporals.format(file.getLastModified(), 'dd-MMM-yyyy HH:mm:ss z')}" class="size250px"></span>
