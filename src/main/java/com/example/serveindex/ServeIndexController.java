@@ -2,6 +2,7 @@ package com.example.serveindex;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
+import org.springframework.boot.web.server.MimeMappings;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +23,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -48,10 +50,16 @@ public class ServeIndexController {
         // Solicitou um arquivo e o arquivo existe
         if (!uriIsDir && !uriFile.isDirectory()) {
             try {
-                FileNameMap fileNameMap = URLConnection.getFileNameMap();
-                String mimeType = fileNameMap.getContentTypeFor(uriFile.getName());
+                String mimeType = getContentTypeFor(uriFile.getName());
                 response.setContentType(mimeType);
-                response.setHeader("Content-disposition", "attachment; filename=" + uriFile.getName());
+
+                // Arquivos HTML são mostrados no browser, os outros são downloads
+                if (mimeType != null && mimeType.equals("text/html")) {
+                    response.setHeader("Content-disposition", "inline");
+                } else {
+                    response.setHeader("Content-disposition", "attachment; filename=" + uriFile.getName());
+                }
+
                 InputStream is = new FileInputStream(uriFile);
                 // copy it to response's OutputStream
                 IOUtils.copy(is, response.getOutputStream());
@@ -99,6 +107,19 @@ public class ServeIndexController {
         model.addAttribute("dirs", dirs);
         model.addAttribute("files", files);
         return "serveindex";
+    }
+
+    private String getContentTypeFor(String filename) {
+        //old
+        //FileNameMap fileNameMap = URLConnection.getFileNameMap();
+        //String mimeType = fileNameMap.getContentTypeFor(uriFile.getName());
+
+        String extension = Optional.ofNullable(filename)
+                .filter(f -> f.contains("."))
+                .map(f -> f.substring(filename.lastIndexOf(".") + 1))
+                .orElse(null);
+
+        return extension == null ? null : MimeMappings.DEFAULT.get(extension);
     }
 
 }
