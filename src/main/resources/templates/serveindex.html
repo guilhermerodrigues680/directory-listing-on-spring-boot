@@ -1,44 +1,96 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-br">
 <head>
-    <title>Directory Listing on Spring Boot</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <style>
-        .size250px {
-            font-family: monospace;
-            display: inline-block;
-            width: 250px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/vendor/tailwind-2.0.2/tailwind.css" rel="stylesheet">
+  <title>Directory Listing on Spring Boot</title>
+  <style>
+    .icon-directory {
+      background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAWCAMAAAD3n0w0AAAAElBMVEX/////zJnM//+ZZjMzMzMAAADCEvqoAAAAA3RSTlP//wDXyg1BAAAASElEQVR42s3KAQbAQAxE0W4m//5XboesdihQ6A/ES4566TsyPZE1caNtwmFE22bBuDTtG8ZMaoyZ8Z+fijEWytpYdEZfWGRdJzEsA9OaTRTxAAAAAElFTkSuQmCC');
+      background-repeat: no-repeat;
+      background-position: center left;
+    }
+
+    .icon-default {
+      background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAWCAMAAAD3n0w0AAAAD1BMVEX////M//+ZmZkzMzMAAABVsTOVAAAAAnRSTlP/AOW3MEoAAAA6SURBVHja3cjHAcAwEIRATqj/lp3jWhUYfoPPag+5EkeII8QRYmB3O3ArENrSB0k8+ivaXrliVY+qZm7SAaxLXnOsAAAAAElFTkSuQmCC');
+      background-repeat: no-repeat;
+      background-position: center left;
+    }
+  </style>
 </head>
-<body>
-    <h1 th:text="'Index of ' + ${path}"></h1>
+<body class="font-sans bg-green-50 text-gray-900">
+  <!-- Container -->
+  <div class="container mx-auto">
+    <!-- Conteudo -->
+    <div class="px-4 pt-10 pb-24">
+      <!-- Cabeçalho Localização -->
+      <div class="pb-10">
+        <h1
+          th:text="'Index of ' + ${path}"
+          class="text-3xl font-extrabold tracking-tight"
+        ></h1>
+        <p class="mt-1 text-lg text-gray-500">Spring Boot</p>
+      </div>
 
-    <hr>
-
-    <div>
-        <span>
-            <a href="../">../</a>
-        </span>
+      <!-- Cabeçalho Diretorios/Arquivos -->
+      <div class="w-full text-xl bg-green-200 rounded p-2 font-semibold">
+        <div class="flex">
+          <span class="flex-1">Nome</span>
+          <span class="flex-none pl-4">Data de Modificação</span>
+          <span class="flex-none pl-4">Tamanho</span>
+        </div>
+      </div>
+  
+      <!-- Subir um nivel -->
+      <div class="w-full bg-white rounded mt-1 hover:bg-gray-50 cursor-pointer">
+        <a href="../" class="flex p-2">
+          <span class="flex-1 icon-directory pl-6">../</span>
+        </a>
+      </div>
+  
+      <!-- Loop sobre todos diretorios -->
+      <div th:each="dir : ${dirs}"
+        class="w-full bg-white rounded mt-1 hover:bg-gray-50 cursor-pointer"
+      >
+        <a th:href="@{'./' + ${dir.getNameUrlEncode()} + '/'}" class="flex p-2">
+          <span
+            th:text="${dir.getName()} + '/'"
+            class="flex-1 truncate icon-directory pl-6"
+          ></span>
+          <span
+            th:text="${#temporals.format(dir.getLastModified(), 'dd-MMM-yyyy HH:mm:ss z')}"
+            class="flex-none pl-4"
+          ></span>
+          <span
+            th:text="${dir.getHumanReadableByteCount(true)}"
+            class="flex-none pl-4"
+          ></span>
+        </a>
+      </div>
+  
+      <!-- Loop sobre todos arquivos -->
+      <div th:each="file : ${files}"
+        class="w-full bg-white rounded mt-1 hover:bg-gray-50 cursor-pointer"
+      >
+        <a th:href="@{'./' + ${file.getNameUrlEncode()}}" class="flex p-2">
+          <span
+            th:text="${file.getName()}"
+            class="flex-1 truncate icon-default pl-6"
+          ></span>
+          <span
+            th:text="${#temporals.format(file.getLastModified(), 'dd-MMM-yyyy HH:mm:ss z')}"
+            class="flex-none pl-4"
+          ></span>
+          <span
+            th:text="${file.getHumanReadableByteCount(true)}"
+            class="flex-none pl-4"
+          ></span>
+        </a>
+      </div>
     </div>
-
-    <div th:each="dir : ${dirs}">
-        <span class="size250px">
-            <a th:text="${dir.getName()} + '/'" th:href="@{'./' + ${dir.getNameUrlEncode()} + '/'}"></a>
-        </span>
-        <!-- <span th:text="${dir.getLastModified()}" class="size250px"></span> -->
-        <span th:text="${#temporals.format(dir.getLastModified(), 'dd-MMM-yyyy HH:mm:ss z')}" class="size250px"></span>
-        <span th:text="${dir.getLength()}" class="size250px"></span>
-    </div>
-    <div th:each="file : ${files}">
-        <span class="size250px">
-            <a th:text="${file.getName()}" th:href="@{'./' + ${file.getNameUrlEncode()}}"></a>
-        </span>
-        <!-- <span th:text="${file.getLastModified()}" class="size250px"></span> -->
-        <span th:text="${#temporals.format(file.getLastModified(), 'dd-MMM-yyyy HH:mm:ss z')}" class="size250px"></span>
-        <span th:text="${file.getLength()}" class="size250px">0</span>
-    </div>
-
-    <hr>
+    <!-- Fim Conteudo -->
+  </div>
+  <!-- Fim Container -->
 </body>
 </html>
